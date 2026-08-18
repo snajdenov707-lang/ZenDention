@@ -47,3 +47,6 @@ yarn-error.log*
 # supabase
 supabase/.branches
 supabase/.temp
+
+# личные референсы дизайна, не тащим в публичный репо
+design-refs/

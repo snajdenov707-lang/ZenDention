@@ -5,40 +5,41 @@
    Единственный источник цвета/типографики/радиусов.
    Хардкодить #hex или размеры в компонентах запрещено.
 
-   Стратегия смены цвета фона:
-   меняется ТОЛЬКО --color-bg. Все стеклянные слои — rgba белого,
-   поэтому работают на любом цвете подложки без пересчёта.
+   Смена цвета фона — меняется ТОЛЬКО --color-bg.
+   Стеклянные слои — rgba белого, поэтому работают на любом фоне.
    ============================================================ */
 
 :root {
-  /* Фон — сейчас чёрный, позже юзер сможет переключить */
   --color-bg: #000000;
 
-  /* Текст поверх стекла и/или фона */
   --color-fg: #ffffff;
   --color-fg-muted: rgba(255, 255, 255, 0.56);
   --color-fg-faint: rgba(255, 255, 255, 0.36);
+  --color-fg-dim: rgba(255, 255, 255, 0.22); /* для затекстовок типа "TASKS©" */
 
-  /* Стеклянные поверхности (Apple Glass) */
-  --glass-fill: rgba(255, 255, 255, 0.10);
-  --glass-fill-strong: rgba(255, 255, 255, 0.16);
-  --glass-fill-hover: rgba(255, 255, 255, 0.14);
-  --glass-border: rgba(255, 255, 255, 0.16);
-  --glass-highlight: rgba(255, 255, 255, 0.24); /* тонкий верхний блик */
+  /* Стеклянные поверхности */
+  --glass-fill: rgba(255, 255, 255, 0.06);
+  --glass-fill-strong: rgba(255, 255, 255, 0.12);
+  --glass-fill-hover: rgba(255, 255, 255, 0.10);
+  --glass-fill-active: rgba(255, 255, 255, 0.20); /* выделенная плитка в лаунчере */
+  --glass-border: rgba(255, 255, 255, 0.14);
+  --glass-highlight: rgba(255, 255, 255, 0.24);
   --glass-blur: 20px;
   --glass-saturation: 140%;
 
-  /* Типографика */
+  /* Динамический блик по контуру (обновляется JS из DeviceOrientation) */
+  --tilt-x: 0;
+  --tilt-y: 0;
+  --shine-angle: 130deg;
+
   --font-sans: Helvetica, "Helvetica Neue", Arial, sans-serif;
 
-  /* Радиусы (Apple-glass — крупноватые) */
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 22px;
 
   --hairline: 1px;
 
-  /* Safe area */
   --sat: env(safe-area-inset-top);
   --sab: env(safe-area-inset-bottom);
   --sal: env(safe-area-inset-left);
@@ -50,6 +51,7 @@
   --color-fg: var(--color-fg);
   --color-fg-muted: var(--color-fg-muted);
   --color-fg-faint: var(--color-fg-faint);
+  --color-fg-dim: var(--color-fg-dim);
 
   --color-glass-fill: var(--glass-fill);
   --color-glass-fill-strong: var(--glass-fill-strong);
@@ -62,14 +64,12 @@
   --radius-lg: var(--radius-lg);
 }
 
-/* Утилиты стекла — переиспользуем везде, чтобы не плодить дубли */
 @layer utilities {
   .glass {
     background-color: var(--glass-fill);
     -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
     backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
     border: var(--hairline) solid var(--glass-border);
-    /* тонкий блик сверху, как на iOS */
     box-shadow: inset 0 1px 0 var(--glass-highlight);
   }
   .glass-strong {
@@ -81,6 +81,49 @@
   }
   .glass-hover:hover {
     background-color: var(--glass-fill-hover);
+  }
+
+  /* Активная плитка (Digest в лаунчере, когда мы на главной) */
+  .glass-active {
+    background-color: var(--glass-fill-active);
+    border-color: rgba(255, 255, 255, 0.32);
+  }
+
+  /* ===== Блик по контуру, крутящийся при наклоне телефона =====
+     Работает так: псевдоэлемент рисует конический градиент по рамке,
+     угол градиента = --shine-angle, обновляется из JS (DeviceOrientation).
+     На устройствах без датчика видно только базовый статичный highlight
+     от .glass — деградирует чисто.
+  */
+  .tilt-shine {
+    position: relative;
+    isolation: isolate; /* чтобы ::before не вылезал из round corners */
+  }
+  .tilt-shine::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: var(--hairline);
+    background: conic-gradient(
+      from var(--shine-angle),
+      transparent 0deg,
+      transparent 45deg,
+      rgba(255, 255, 255, 0.7) 90deg,
+      transparent 135deg,
+      transparent 360deg
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.4s;
   }
 }
 
