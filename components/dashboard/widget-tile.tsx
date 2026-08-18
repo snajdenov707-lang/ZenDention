@@ -4,15 +4,11 @@ import { cn } from "@/lib/utils";
 
 interface Props {
   href: string;
-  label: string; // "TASKS", "NOTES", ...
-  children: ReactNode; // содержимое плитки (плюсик или числа)
+  label: string;
+  children: ReactNode;
   className?: string;
 }
 
-/**
- * Плитка-виджет из ref 02. Верх — маленький аплайн, ниже — контент.
- * Пропорция плитки задаётся аспектом контейнера в родительской сетке.
- */
 export function WidgetTile({ href, label, children, className }: Props) {
   return (
     <Link
@@ -20,24 +16,33 @@ export function WidgetTile({ href, label, children, className }: Props) {
       className={cn(
         "glass tilt-shine glass-hover rounded-[var(--radius-lg)]",
         "flex flex-col justify-between",
-        "px-4 py-3 min-h-[112px]",
+        "px-4 py-3 min-h-[122px]",
         className,
       )}
     >
-      <div className="text-[10px] uppercase tracking-[0.14em] text-[var(--color-fg-muted)]">
+      <div className="text-[10px] uppercase tracking-[0.16em] text-[var(--color-fg-muted)]">
         {label}
       </div>
-      <div className="flex-1 flex flex-col justify-end">{children}</div>
+      <div className="flex flex-1 flex-col justify-end">{children}</div>
     </Link>
   );
 }
 
-/** Пустое состояние плитки: большой + и подпись. */
 export function TileEmpty({ hint }: { hint: string }) {
   return (
     <>
-      <div className="text-[28px] leading-none text-[var(--color-fg)]">+</div>
+      <div className="text-[36px] leading-none text-[var(--color-fg)]">+</div>
       <div className="mt-2 text-[12px] text-[var(--color-fg-muted)]">{hint}</div>
+    </>
+  );
+}
+
+/** Плитка с числовым состоянием (Notes «1», Meetings «1 / вс 3.04 06:07»). */
+export function TileCount({ count, sub }: { count: number | string; sub: string }) {
+  return (
+    <>
+      <div className="text-[36px] font-semibold leading-none">{count}</div>
+      <div className="mt-2 text-[12px] text-[var(--color-fg-muted)]">{sub}</div>
     </>
   );
 }
