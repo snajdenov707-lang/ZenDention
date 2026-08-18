@@ -32,6 +32,14 @@ export function TelegramBoot({ fallback, failure, children }: Props) {
       // Даём time.js Telegram-скрипту инициализироваться (он ставит window.Telegram синхронно, но перестрахуемся)
       await new Promise((r) => setTimeout(r, 0));
 
+      // Dev-режим: ?dev=1 в URL — пропускаем проверку initData и рендерим UI.
+      // Безопасно: сессии нет, Supabase-запросы без токена отсекаются RLS.
+      // Нужно для визуального тестирования вне Telegram (свой браузер).
+      if (typeof window !== "undefined" && window.location.search.includes("dev=1")) {
+        if (!cancelled) setState("ready");
+        return;
+      }
+
       const supabase = getSupabase();
 
       // Быстрый путь: уже есть валидная сессия
