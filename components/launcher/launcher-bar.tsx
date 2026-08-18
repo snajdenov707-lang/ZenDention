@@ -20,7 +20,7 @@ export function LauncherBar() {
   const pathname = usePathname();
 
   return (
-    <div className={cn("fixed inset-x-0 z-40 px-3", "bottom-[max(0.75rem,var(--sab))]")}>
+    <div className={cn("fixed inset-x-0 z-40 px-3", "bottom-[var(--sab)] pb-2")}>
       <div className="relative mx-auto max-w-md">
         <div className="grid grid-cols-4 gap-2">
           {tiles.map((t) => {

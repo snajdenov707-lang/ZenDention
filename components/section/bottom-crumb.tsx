@@ -23,7 +23,7 @@ export function BottomCrumb({
     <div
       className={cn(
         "fixed inset-x-0 z-40 px-3",
-        "bottom-[max(0.75rem,var(--sab))]",
+        "bottom-[var(--sab)] pb-2",
       )}
     >
       <div className="relative mx-auto flex max-w-md items-center gap-2">

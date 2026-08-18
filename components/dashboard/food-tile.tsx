@@ -12,7 +12,7 @@ export function FoodTile() {
   const kcalPct = Math.min(100, Math.round((kcalNow / kcalGoal) * 100));
 
   return (
-    <WidgetTile href="/section/food" label="FOOD">
+    <WidgetTile href="/food" label="FOOD">
       <div className="flex items-baseline gap-1">
         <span className="text-[26px] font-semibold leading-none">{kcalNow}</span>
         <span className="text-[12px] text-[var(--color-fg-muted)]">/{kcalGoal} ккал</span>
