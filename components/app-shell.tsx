@@ -14,8 +14,12 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col">
+      {/*
+        pb здесь = высота лаунчера + запас на мик, торчащий сверху,
+        + safe-area снизу. Иначе последняя плашка (Pro) прячется за лаунчер.
+      */}
       <main
-        className="flex-1 px-3 pt-[max(0.75rem,var(--sat))] pb-[calc(4.5rem+var(--sab)+1rem)]"
+        className="flex-1 px-3 pt-[max(0.75rem,var(--sat))] pb-[calc(11rem+var(--sab))]"
       >
         {children}
       </main>
